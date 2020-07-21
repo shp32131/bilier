@@ -157,7 +157,6 @@ setTimeout(() => {
                         if(a){
                             if(a.href){
                                 CHAT_URLS.add(a.href.split('?')[0]);
-                                // console.log("observer---------two");
                             }
                         }
                     }
