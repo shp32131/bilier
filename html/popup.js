@@ -4,6 +4,7 @@ let chatFlag = document.querySelector('#chat_gift_flag');
 let barrageFlag = document.querySelector('#barrage_gift_flag');
 let hourRankFlag = document.querySelector('#hour_rank_gift_flag');
 let hourRank = document.querySelector('#hour_rank_nums');
+let msg = document.querySelector('footer>span');
 
 let userConfigs = {};
 
@@ -57,7 +58,6 @@ runFlag.addEventListener('click',meHandler);
 chatFlag.addEventListener('click',meHandler);
 barrageFlag.addEventListener('click',meHandler);
 hourRankFlag.addEventListener('click',meHandler);
-// hourRankFlag.addEventListener('click',meHandler(event));
 
 hourRank.addEventListener('change',e => {
     e.bubbles = false;
@@ -67,6 +67,11 @@ hourRank.addEventListener('change',e => {
         chrome.storage.local.set({'configs': userConfigs});
     }
 });
+
+let items = document.querySelectorAll('li>.option');
+for(const item of items){
+    item.addEventListener('mouseover',overHandler);
+}
 
 function meHandler(me){
     let key = me.target.id;
@@ -82,5 +87,22 @@ function meHandler(me){
         me.target.style.color = "blue";
         userConfigs[key] = true;
         chrome.storage.local.set({'configs': userConfigs});
+    }
+}
+
+function overHandler(me){
+    console.log(me.target.id);
+    if(me.target.id == 'tab_nums_max'){
+        msg.innerHTML = "窗口打开网页的最大数量,建议10-15之间,大多可能会比较卡...";
+    }else if(me.target.id == 'script_run_flag'){
+        msg.innerHTML = "选择是否开启插件...";
+    }else if(me.target.id == 'chat_gift_flag'){
+        msg.innerHTML = "选择是否抓取聊天区域的礼物...";
+    }else if(me.target.id == 'barrage_gift_flag'){
+        msg.innerHTML = "选择是否抓取弹幕中的礼物...";
+    }else if(me.target.id == 'hour_rank_gift_flag'){
+        msg.innerHTML = "选择是否启动小时总榜排行中的礼物查询...";
+    }else if(me.target.id == 'hour_rank_nums'){
+        msg.innerHTML = "要查询的小时总榜的个数,从第一名开始往后数,要在0-12之间...";
     }
 }

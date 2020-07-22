@@ -7,7 +7,7 @@ html,body{
 #container{
     width: 180px;
     height: 160px;
-    font-size: 18px;
+    font-size: 16px;
 }
 ul{
     font-style: normal;
@@ -31,5 +31,5 @@ footer{
 }
 footer>span{
     color: rgb(240, 160, 11);
-    font-size: smaller;
+    font-size: small;
 }

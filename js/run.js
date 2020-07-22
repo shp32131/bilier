@@ -38,29 +38,25 @@ if(bilier == window.document.URL.split('?')[0]){
     MAIN_FLAG = true;
 }
 document.querySelector('body').addEventListener('dblclick',e => {
-    auto_close_flag ? auto_close_flag = false : auto_close_flag = true;
+    if(!MAIN_FLAG){
+        auto_close_flag ? auto_close_flag = false : auto_close_flag = true;
+    }
 });
 
-try{
-    JSON.parse(localStorage.configs);
-}catch{
-    localStorage.configs = null;
-}
-
-if(!!JSON.parse(localStorage.configs)){
-    configs = JSON.parse(localStorage.configs);
-    chrome.storage.local.set({'configs': JSON.parse(localStorage.configs)});
-}else{
+if(sessionStorage.configs == undefined){
     chrome.storage.local.set({'configs': defaultConfigs});
     configs = defaultConfigs;
+}else{
+    chrome.storage.local.set({'configs': JSON.parse(sessionStorage.configs)});
+    configs = JSON.parse(sessionStorage.configs);
 }
 
 chrome.storage.onChanged.addListener((changes,area) => {
     if(area == 'local'){
         for(let key in changes){
             if(key == 'configs'){
-                localStorage.configs = JSON.stringify(changes[key].newValue);
-                configs = JSON.parse(localStorage.configs);
+                sessionStorage.configs = JSON.stringify(changes[key].newValue);
+                configs = JSON.parse(sessionStorage.configs);
             }
         }
     }
@@ -80,24 +76,23 @@ new Promise((resolve,reject)=>{
     let timer = setInterval(()=>{
         if(!configs.script_run_flag) return;
         ticks++;
-        if(ticks == 43200) ticks = 0;
+        if(43200 == ticks ) ticks = 0;
         btn = document.querySelector(".function-bar");
-        // detect and get current tab gifts
-        if(btn){
-            if(ticks % 2 == 0){
+        // get gifts from current tab 
+        if(!!btn){
+            if(ticks % 1 == 0){
                 btn.click();
             }
-        }else if(ticks % 3 == 0){
+        }else if(ticks % 2 == 0){
             if(auto_close_flag && !MAIN_FLAG){
                 clearInterval(timer);
                 timer = null;
                 resolve("close");
             }
         }
-        
-        // to open other gift tab 
+        // probe to gift tab 
         if(MAIN_FLAG){
-
+            // probe to chat  area and get the urls
             if(configs.chat_gift_flag && CHAT_URLS.size > 0) {
                 for(const item of CHAT_URLS.values()){
                     if(urls.indexOf(item) < 0){
@@ -107,7 +102,7 @@ new Promise((resolve,reject)=>{
                 CHAT_URLS.clear();
                 if(hour_rank_openable) hour_rank_openable = false;
             }
-
+            // probe to barrage area and get the urls
             if(configs.barrage_gift_flag && BARRAGE_URLS.size > 0) {
                 for(const item of BARRAGE_URLS.values()){
                     if(urls.indexOf(item) < 0){
@@ -117,8 +112,8 @@ new Promise((resolve,reject)=>{
                 BARRAGE_URLS.clear();
                 if(hour_rank_openable) hour_rank_openable = false;
             }
-
-            if(configs.hour_rank_gift_flag && hour_rank_openable && ticks % 40 == 0){
+            // open hour rank popup tab
+            if(configs.hour_rank_gift_flag && hour_rank_openable && ticks % 35 == 0){
                 let hr = document.querySelector('.hour-rank-content');
                 if(hr) {
                     hr.click();
@@ -128,21 +123,21 @@ new Promise((resolve,reject)=>{
                     },5000);
                 }
             }
-
-            if(configs.hour_rank_gift_flag && ticks % 2 == 0 && urls.length == 0 ){
+            // probe to hour rank area and get the urls
+            if(configs.hour_rank_gift_flag && urls.length == 0 ){
                 if(HOUR_RANK_URLS.size > 0){
                     urls = [...HOUR_RANK_URLS];
                     HOUR_RANK_URLS.clear();
                     hour_rank_openable = false;
                 }
             }
-
+            // open gift tab
             if(ticks % 6 == 0 && urls.length > 0){
                 window.open(urls[i]);
                 i++;
                 // console.log("---------------i= "+ i);
             }
-
+            // reset variable
             if(i == urls.length){
                 urls.length = 0;
                 i = 0;
@@ -155,8 +150,7 @@ new Promise((resolve,reject)=>{
     window.opener = null;
     window.close();
 }).catch(error => {
-    // window.location.reload();
-    console.log(error);
+    window.location.reload();
 });
 
 /**
