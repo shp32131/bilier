@@ -12,36 +12,59 @@
 if(window["run.js"]) return;
 window["run.js"] = true;
 
-// control this script run or stop
-let RUN_FLAG = true;
-let AUTO_CLOSE = true;
-// get the url of current tab 
-let CURRENT_URL = window.document.URL.split('?')[0];
 // main tab flag
 let MAIN_FLAG = false;
+// auto close tab flag
+let auto_close_flag = true;
 // config a default main tab 
-let BILIERS = new Set(['https://live.bilibili.com/21999349']);
+let bilier ='https://live.bilibili.com/21999349';
 // get urls from chat node
 let CHAT_URLS = new Set();
-// HOUR_RANK_URLS_SIZE  need low 12
-let HOUR_RANK_URLS_SIZE = 8;
+// get urls from barrage
+let BARRAGE_URLS = new Set();
 // get urls form hour rank
 let HOUR_RANK_URLS = new Set();
+// default configs
+let defaultConfigs = {
+    'script_run_flag': true,
+    'chat_gift_flag': true,
+    'barrage_gift_flag': true,
+    'hour_rank_gift_flag': false,
+    'hourRankLength': 6
+};
+let configs = null;
 
-// detect main tab
-if(BILIERS.has(CURRENT_URL)){
+if(bilier == window.document.URL.split('?')[0]){
     MAIN_FLAG = true;
 }
-// when double click in body element means not close the tab  
-let body = document.querySelector('body');
-body.addEventListener('dblclick',function(){
-    if(CURRENT_URL.includes("21999349")){
-        RUN_FLAG ? RUN_FLAG = false : RUN_FLAG = true; 
-    }else{
-        AUTO_CLOSE ? AUTO_CLOSE = false : AUTO_CLOSE = true;
-    }
+document.querySelector('body').addEventListener('dblclick',e => {
+    auto_close_flag ? auto_close_flag = false : auto_close_flag = true;
 });
 
+try{
+    JSON.parse(localStorage.configs);
+}catch{
+    localStorage.configs = null;
+}
+
+if(!!JSON.parse(localStorage.configs)){
+    configs = JSON.parse(localStorage.configs);
+    chrome.storage.local.set({'configs': JSON.parse(localStorage.configs)});
+}else{
+    chrome.storage.local.set({'configs': defaultConfigs});
+    configs = defaultConfigs;
+}
+
+chrome.storage.onChanged.addListener((changes,area) => {
+    if(area == 'local'){
+        for(let key in changes){
+            if(key == 'configs'){
+                localStorage.configs = JSON.stringify(changes[key].newValue);
+                configs = JSON.parse(localStorage.configs);
+            }
+        }
+    }
+});
 
 /**
  * 1.get the gift if live page have gift 
@@ -55,16 +78,17 @@ new Promise((resolve,reject)=>{
     let i = 0;
     let hour_rank_openable = true;
     let timer = setInterval(()=>{
+        if(!configs.script_run_flag) return;
         ticks++;
-        if(ticks == 86400) ticks = 0;
+        if(ticks == 43200) ticks = 0;
         btn = document.querySelector(".function-bar");
         // detect and get current tab gifts
         if(btn){
-            if(ticks % 5 == 0){
+            if(ticks % 2 == 0){
                 btn.click();
             }
-        }else if(ticks % 5 == 0){
-            if(AUTO_CLOSE && !MAIN_FLAG){
+        }else if(ticks % 3 == 0){
+            if(auto_close_flag && !MAIN_FLAG){
                 clearInterval(timer);
                 timer = null;
                 resolve("close");
@@ -72,8 +96,29 @@ new Promise((resolve,reject)=>{
         }
         
         // to open other gift tab 
-        if(MAIN_FLAG && RUN_FLAG){
-            if(ticks % 90 == 0 && hour_rank_openable){
+        if(MAIN_FLAG){
+
+            if(configs.chat_gift_flag && CHAT_URLS.size > 0) {
+                for(const item of CHAT_URLS.values()){
+                    if(urls.indexOf(item) < 0){
+                        urls.splice(i,0,item);
+                    }
+                }
+                CHAT_URLS.clear();
+                if(hour_rank_openable) hour_rank_openable = false;
+            }
+
+            if(configs.barrage_gift_flag && BARRAGE_URLS.size > 0) {
+                for(const item of BARRAGE_URLS.values()){
+                    if(urls.indexOf(item) < 0){
+                        urls.splice(i,0,item);
+                    }
+                }
+                BARRAGE_URLS.clear();
+                if(hour_rank_openable) hour_rank_openable = false;
+            }
+
+            if(configs.hour_rank_gift_flag && hour_rank_openable && ticks % 40 == 0){
                 let hr = document.querySelector('.hour-rank-content');
                 if(hr) {
                     hr.click();
@@ -84,27 +129,20 @@ new Promise((resolve,reject)=>{
                 }
             }
 
-            if(ticks % 2 == 0 && urls.length == 0 ){
+            if(configs.hour_rank_gift_flag && ticks % 2 == 0 && urls.length == 0 ){
                 if(HOUR_RANK_URLS.size > 0){
                     urls = [...HOUR_RANK_URLS];
                     HOUR_RANK_URLS.clear();
                     hour_rank_openable = false;
                 }
             }
-            if(CHAT_URLS.size > 0) {
-                for(const item of CHAT_URLS.values()){
-                    if(urls.indexOf(item) < 0){
-                        urls.splice(i,0,item);
-                    }
-                }
-                CHAT_URLS.clear();
-                if(hour_rank_openable) hour_rank_openable = false;
-            }
-            if(ticks % 15 == 0 && urls.length > 0){
+
+            if(ticks % 6 == 0 && urls.length > 0){
                 window.open(urls[i]);
                 i++;
                 // console.log("---------------i= "+ i);
             }
+
             if(i == urls.length){
                 urls.length = 0;
                 i = 0;
@@ -112,12 +150,13 @@ new Promise((resolve,reject)=>{
             }
         }
 
-    },1000);
+    },3000);
 }).then(value => {
     window.opener = null;
     window.close();
 }).catch(error => {
-    window.location.reload();
+    // window.location.reload();
+    console.log(error);
 });
 
 /**
@@ -156,7 +195,7 @@ setTimeout(() => {
                         let a = document.querySelector('.announcement-wrapper>a');
                         if(a){
                             if(a.href){
-                                CHAT_URLS.add(a.href.split('?')[0]);
+                                BARRAGE_URLS.add(a.href.split('?')[0]);
                             }
                         }
                     }
@@ -179,7 +218,7 @@ setTimeout(() => {
                             if(iframe){
                                 let alinks = iframe.contentWindow.document.querySelectorAll('.face>a');
                                 if(alinks.length && alinks.length > 0){
-                                    for(let i = 0;i < HOUR_RANK_URLS_SIZE;i++){
+                                    for(let i = 0;i < defaultConfigs.hourRankLength;i++){
                                         HOUR_RANK_URLS.add(alinks[i].href.split('?')[0]);
                                     }
                                 }

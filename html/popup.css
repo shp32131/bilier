@@ -6,5 +6,30 @@ html,body{
 }
 #container{
     width: 180px;
-    height: 100px;
+    height: 160px;
+    font-size: 18px;
+}
+ul{
+    font-style: normal;
+}
+li{
+    list-style: none;
+    letter-spacing: 0px;
+    color: coral;
+}
+li>.description{
+    letter-spacing: 1px;
+    color:rgba(33, 33, 34,05);
+}
+#tab_nums_max,#hour_rank_nums{
+    display: inline;
+    border: none;
+}
+footer{
+    color: rgb(236, 4, 4);
+    font-size: small;
+}
+footer>span{
+    color: rgb(240, 160, 11);
+    font-size: smaller;
 }

@@ -1,5 +1,20 @@
-// tabs number max
+let Url_Matches = 'live.bilibili.com';
+let Schemes = ["https","http"];
+let Room_Number = 21999349;
 let Tab_Nums_Max = 10;
+
+chrome.storage.local.set({'tabNumsMax': Tab_Nums_Max});
+
+chrome.storage.onChanged.addListener((changes,area) => {
+    if(area == 'local'){
+        for(let key in changes){
+            if(key == 'tabNumsMax'){
+                Tab_Nums_Max = changes[key].newValue;
+            }
+        }
+    }
+});
+
 
 /**
  * show popup.html 
@@ -10,8 +25,8 @@ chrome.declarativeContent.onPageChanged.removeRules(undefined,function(){
         conditions:[
             new chrome.declarativeContent.PageStateMatcher({ 
                 pageUrl:{
-                    urlMatches: "live.bilibili",
-                    schemes: ["https","http"]
+                    urlMatches: Url_Matches+"/"+"21999349",
+                    schemes: Schemes
                 }
             })
         ],
@@ -28,7 +43,7 @@ chrome.declarativeContent.onPageChanged.removeRules(undefined,function(){
  * 2. if the tabs more than Tab_Nums_Max then close 
  */
 chrome.webNavigation.onCompleted.addListener(info => {
-    if(info.url.includes("live.bilibili")){
+    if(info.url.includes(Url_Matches)){
         new Promise((resolve,reject) => {
             let urls = [];
             chrome.tabs.query({
@@ -42,7 +57,7 @@ chrome.webNavigation.onCompleted.addListener(info => {
                 resolve(urls);
             });
         }).then(values => {
-            if(values.indexOf(info.url.split("?")[0]) >= 0 || values.length > Tab_Nums_Max){
+            if(values.indexOf(info.url.split("?")[0]) > -1 || values.length > Tab_Nums_Max){
                 chrome.tabs.remove(info.tabId);
             }else{
                 chrome.tabs.executeScript(info.tabId,{

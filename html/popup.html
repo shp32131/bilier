@@ -4,12 +4,41 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>bilier</title>
+    <link rel="stylesheet" type="text/css" href="./iconfont.css" />
     <link rel="stylesheet" type="text/css" href="./popup.css" />
 </head>
 <body>
     <div id="container">
-        <h3>bilier</h3>
-        <a href=""><span>使用说明</span></a>
+        <ul>
+            <li>
+                <span class="description">网页数量</span>
+                <input type="value" id="tab_nums_max" maxlength="2" size="2">
+            </li>
+            <li>
+                <span class="description">启动bilier</span>
+                <span id="script_run_flag"></span>
+            </li>
+            <li>
+                <span class="description">聊天区</span>
+                <span id="chat_gift_flag"></span>
+            </li>
+            <li>
+                <span class="description">弹幕区</span>
+                <span id="barrage_gift_flag"></span>
+            </li>
+            <li>
+                <span class="description">小时榜</span>
+                <span id="hour_rank_gift_flag"></span>
+            </li>
+            <li>
+                <span class="description">总榜数量</span>
+                <input type="value" id="hour_rank_nums" maxlength="2" size="2">
+            </li>
+        </ul>
+        <footer>
+            提示:&nbsp;<span>以上参数根据自己需求进行设置,点击相关设置会有相关提示</span>
+        </footer>
     </div>
+    <script src="./popup.js"></script>
 </body>
 </html>

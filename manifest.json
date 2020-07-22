@@ -19,7 +19,6 @@
           "webNavigation",
           "declarativeContent"
      ],
-     "options_page": "./html/options.html",
      "page_action": {
           "default_icon": {
                "16": "./imgs/bilib16.png",

@@ -7,7 +7,6 @@ let menu = {
         window.open(Lover_Anchor);
     }
 }
-
 /**
  * create menus
  */
