@@ -49,7 +49,7 @@ chrome.storage.local.get(['tabNumsMax','configs'],value => {
 tabs.addEventListener('change',e => {
     e.bubbles = false;
     let value = typeof Number(e.target.value) == 'number' ? Number(e.target.value) : undefined;
-    if(!!value){
+    if(!!value && value > 0 && value < 30){
         chrome.storage.local.set({'tabNumsMax': value});
     }
 });
@@ -62,7 +62,7 @@ hourRankFlag.addEventListener('click',meHandler);
 hourRank.addEventListener('change',e => {
     e.bubbles = false;
     let value = typeof Number(e.target.value) == 'number' ? Number(e.target.value) : undefined;
-    if(!!value && value < 12){
+    if(!!value && value < 12 && value > 0){
         userConfigs.hourRankLength = value;
         chrome.storage.local.set({'configs': userConfigs});
     }
@@ -93,7 +93,7 @@ function meHandler(me){
 function overHandler(me){
     console.log(me.target.id);
     if(me.target.id == 'tab_nums_max'){
-        msg.innerHTML = "窗口打开网页的最大数量,建议10-15之间,大多可能会比较卡...";
+        msg.innerHTML = "窗口打开网页的最大数量,有效值在0到30之间...";
     }else if(me.target.id == 'script_run_flag'){
         msg.innerHTML = "选择是否开启插件...";
     }else if(me.target.id == 'chat_gift_flag'){
@@ -103,6 +103,6 @@ function overHandler(me){
     }else if(me.target.id == 'hour_rank_gift_flag'){
         msg.innerHTML = "选择是否启动小时总榜排行中的礼物查询...";
     }else if(me.target.id == 'hour_rank_nums'){
-        msg.innerHTML = "要查询的小时总榜的个数,从第一名开始往后数,要在0-12之间...";
+        msg.innerHTML = "要查询的小时总榜的个数,从第一名开始往后数,有效值在0到12之间...";
     }
 }
