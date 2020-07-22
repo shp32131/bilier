@@ -1,5 +1,5 @@
 // tabs number max
-let tab_nums_max = 5;
+let Tab_Nums_Max = 10;
 
 /**
  * show popup.html 
@@ -22,28 +22,10 @@ chrome.declarativeContent.onPageChanged.removeRules(undefined,function(){
 });
 
 /**
- * listener: tabs onCreated
- * purpose: remove duplicate tab 
- * Note: the url properties not set immediate when a tab was created
- */
-// chrome.tabs.onCreated.addListener(tab => {
-    // chrome.tabs.query({
-    //     currentWindow: true,
-    //     discarded: false,
-    //     active: false,
-    // },tabs => {
-    //     if(tabs.length > tab_nums_max){
-    //         chrome.tabs.remove(tab.id);
-    //     }
-    // });
-
-// });
-
-/**
  * webNavigation onCompleted
  * insert run.js when navigation to bilibili live tabs 
  * 1. if the tab open already then close 
- * 2. if the tabs more than tab_nums_max then close 
+ * 2. if the tabs more than Tab_Nums_Max then close 
  */
 chrome.webNavigation.onCompleted.addListener(info => {
     if(info.url.includes("live.bilibili")){
@@ -60,7 +42,7 @@ chrome.webNavigation.onCompleted.addListener(info => {
                 resolve(urls);
             });
         }).then(values => {
-            if(values.indexOf(info.url.split("?")[0]) >= 0 || values.length > tab_nums_max){
+            if(values.indexOf(info.url.split("?")[0]) >= 0 || values.length > Tab_Nums_Max){
                 chrome.tabs.remove(info.tabId);
             }else{
                 chrome.tabs.executeScript(info.tabId,{
