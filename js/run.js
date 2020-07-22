@@ -74,7 +74,6 @@ new Promise((resolve,reject)=>{
     let i = 0;
     let hour_rank_openable = true;
     let timer = setInterval(()=>{
-        if(!configs.script_run_flag) return;
         ticks++;
         if(43200 == ticks ) ticks = 0;
         btn = document.querySelector(".function-bar");
@@ -90,6 +89,7 @@ new Promise((resolve,reject)=>{
                 resolve("close");
             }
         }
+        if(!configs.script_run_flag) return;
         // probe to gift tab 
         if(MAIN_FLAG){
             // probe to chat  area and get the urls
