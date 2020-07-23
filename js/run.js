@@ -89,7 +89,7 @@ new Promise((resolve,reject)=>{
                 resolve("close");
             }
         }
-        if(!configs.script_run_flag) return;
+        if(!!configs && !configs.script_run_flag) return;
         // probe to gift tab 
         if(MAIN_FLAG){
             // probe to chat  area and get the urls
@@ -113,7 +113,7 @@ new Promise((resolve,reject)=>{
                 if(hour_rank_openable) hour_rank_openable = false;
             }
             // open hour rank popup tab
-            if(configs.hour_rank_gift_flag && hour_rank_openable && ticks % 35 == 0){
+            if(configs.hour_rank_gift_flag && hour_rank_openable && ticks % 40 == 0){
                 let hr = document.querySelector('.hour-rank-content');
                 if(hr) {
                     hr.click();

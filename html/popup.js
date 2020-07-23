@@ -75,7 +75,6 @@ for(const item of items){
 
 function meHandler(me){
     let key = me.target.id;
-    console.log(key);
     me.bubbles = false;
     if(me.target.className.includes('icon-gou')){
         me.target.setAttribute('class',"iconfont icon-shanchuguanbicha");
@@ -91,7 +90,6 @@ function meHandler(me){
 }
 
 function overHandler(me){
-    console.log(me.target.id);
     if(me.target.id == 'tab_nums_max'){
         msg.innerHTML = "窗口打开网页的最大数量,有效值在0到30之间...";
     }else if(me.target.id == 'script_run_flag'){
@@ -101,8 +99,8 @@ function overHandler(me){
     }else if(me.target.id == 'barrage_gift_flag'){
         msg.innerHTML = "选择是否抓取弹幕中的礼物...";
     }else if(me.target.id == 'hour_rank_gift_flag'){
-        msg.innerHTML = "选择是否启动小时总榜排行中的礼物查询...";
+        msg.innerHTML = "选择是否启动小时总榜排行中的礼物查询,开启之后,每隔两分钟查询一次小时总榜...";
     }else if(me.target.id == 'hour_rank_nums'){
-        msg.innerHTML = "要查询的小时总榜的个数,从第一名开始往后数,有效值在0到12之间...";
+        msg.innerHTML = "查询小时总榜的个数,有效值在0到12之间,一般设置为6就好了...";
     }
 }
