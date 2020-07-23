@@ -43,16 +43,16 @@ document.querySelector('body').addEventListener('dblclick',e => {
     }
 });
 
-if(sessionStorage.configs == undefined){
+if(MAIN_FLAG && sessionStorage.configs == undefined){
     chrome.storage.local.set({'configs': defaultConfigs});
     configs = defaultConfigs;
-}else{
+}else if(MAIN_FLAG){
     chrome.storage.local.set({'configs': JSON.parse(sessionStorage.configs)});
     configs = JSON.parse(sessionStorage.configs);
 }
 
 chrome.storage.onChanged.addListener((changes,area) => {
-    if(area == 'local'){
+    if(area == 'local' && MAIN_FLAG){
         for(let key in changes){
             if(key == 'configs'){
                 sessionStorage.configs = JSON.stringify(changes[key].newValue);
