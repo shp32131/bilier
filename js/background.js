@@ -15,7 +15,6 @@ chrome.storage.onChanged.addListener((changes,area) => {
     }
 });
 
-
 /**
  * show popup.html 
  * when extension button onClick show popup.html if tab.url match the specified url
@@ -35,6 +34,15 @@ chrome.declarativeContent.onPageChanged.removeRules(undefined,function(){
         ]
     }])
 });
+
+/**
+ * on tab create
+ */
+chrome.tabs.onCreated.addListener(tab => {
+    // chrome.windows.update()
+});
+
+
 
 /**
  * webNavigation onCompleted
